@@ -1,0 +1,153 @@
+# syntax=docker/dockerfile:1
+# Multi-stage Dockerfile for pipeline environment with Ruby on Rails, Node.js, and Go
+
+FROM ruby:3.4.5-slim-bookworm AS base
+
+# Enable yjit on all Ruby processes for better performance
+ENV RUBYOPT="--yjit"
+
+# ------------------------------------------------------------------
+
+# Runtime dependencies layer (matches buildkite structure)
+FROM base AS runtime-deps
+ARG CODENAME=bookworm
+
+# Add PostgreSQL apt repository
+ADD --chmod=0644 https://www.postgresql.org/media/keys/ACCC4CF8.asc /etc/apt/keyrings/pgdg.asc
+RUN echo "0144068502a1eddd2a0280ede10ef607d1ec592ce819940991203941564e8e76 /etc/apt/keyrings/pgdg.asc" | sha256sum -c \
+    && echo "deb [signed-by=/etc/apt/keyrings/pgdg.asc] http://apt.postgresql.org/pub/repos/apt/ ${CODENAME}-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+    && apt-get update \
+    && apt-get install --assume-yes --no-install-recommends \
+       libpq5 \
+       wkhtmltopdf \
+       libjemalloc2 \
+       libyaml-dev \
+       procps \
+       # Additional dependencies for Rails development
+       bzip2 libc-dev-bin libc6-dev libcrypt-dev libffi-dev \
+       libgmp-dev libgmpxx4ldbl libgssapi-krb5-2 libk5crypto3 \
+       libkeyutils1 libkrb5-3 libkrb5support0 libncursesw6 \
+       libnsl-dev libnsl2 libproc2-0 libssl-dev libtirpc-common \
+       libtirpc-dev libtirpc3 rpcsvc-proto zlib1g-dev \
+    && apt-get purge --assume-yes linux-libc-dev \
+    && apt-get upgrade --assume-yes \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# ------------------------------------------------------------------
+
+# Builder dependencies (adds Node.js, build tools, etc.)
+FROM runtime-deps AS builder-deps
+ARG NODE_MAJOR_VERSION=22
+
+# Add Node.js repository (same as buildkite)
+ADD --chmod=0644 https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key /etc/apt/keyrings/nodesource.asc
+COPY <<EOF /etc/apt/sources.list.d/nodesource.list
+deb [signed-by=/etc/apt/keyrings/nodesource.asc] https://deb.nodesource.com/node_${NODE_MAJOR_VERSION}.x nodistro main
+EOF
+COPY <<EOF /etc/apt/preferences.d/nodesource
+Package: nodejs
+Pin: origin deb.nodesource.com
+Pin-Priority: 1000
+EOF
+
+# Install build dependencies
+RUN apt-get update && \
+    apt-get install --assume-yes --no-install-recommends \
+      awscli \
+      build-essential \
+      curl \
+      git \
+      jq \
+      libpq-dev \
+      nodejs \
+      postgresql-client-14 \
+      libz-dev \
+      libzstd-dev \
+      pkgconf \
+      unzip \
+      wget && \
+    npm install --global yarn && \
+    rm -rf /var/lib/apt/lists/*
+
+# ------------------------------------------------------------------
+
+# Bundle Ruby dependencies and gems
+FROM builder-deps AS ruby-deps
+
+# Install essential gems for Rails development
+RUN gem install --no-document bundler
+
+# Set up bundle environment
+ENV BUNDLE_PATH="/usr/local/bundle"
+ENV BUNDLE_SILENCE_ROOT_WARNING=1
+ENV BUNDLE_APP_CONFIG="/usr/local/bundle"
+
+# ------------------------------------------------------------------
+
+# Add additional development tools
+FROM ruby-deps AS development-tools
+
+# Install GitHub CLI
+RUN curl -fsSL https://github.com/cli/cli/releases/download/v2.62.0/gh_2.62.0_linux_amd64.tar.gz | tar -xz -C /tmp && \
+    mv /tmp/gh_2.62.0_linux_amd64/bin/gh /usr/local/bin/ && \
+    rm -rf /tmp/gh_2.62.0_linux_amd64
+
+# Install claude-code
+RUN npm install -g @anthropic-ai/claude-code
+
+# Install linearis
+RUN npm install -g --install-links czottmann/linearis
+
+
+# Configure git for development
+RUN git config --global --add safe.directory '*' && \
+    git config --global init.defaultBranch main && \
+    git config --global pull.rebase false
+
+FROM golang:1.24 AS go-binaries
+
+# Build the chat-parser
+COPY ./chat-parser ./chat-parser
+WORKDIR /go/chat-parser
+
+RUN go build -v -o /out/chat-parser ./main.go
+
+# Install the Buildkite MCP Server
+RUN go install github.com/buildkite/buildkite-mcp-server/cmd/buildkite-mcp-server@latest
+
+# Create final CI layer
+FROM development-tools AS ci
+
+# Create non-root user
+RUN useradd -m -u 1000 -s /bin/bash agent && \
+    mkdir -p /workspace && \
+    chown -R agent:agent /workspace
+
+# Copy project setup script
+WORKDIR /workspace
+COPY ./scripts/setup-project.sh .
+RUN chmod +x setup-project.sh
+
+# Copy agent script
+WORKDIR /workspace
+COPY ./scripts/agent.sh .
+RUN chmod +x agent.sh
+
+COPY prompts ./prompts/
+
+COPY claude.json .claude/settings.local.json
+COPY .mcp.json .mcp.json
+
+COPY --from=go-binaries /out/chat-parser chat-parser
+COPY --from=go-binaries /go/bin/buildkite-mcp-server buildkite-mcp-server
+
+# Set ownership for agent user
+RUN chown -R agent:agent /workspace
+
+# Switch to non-root user
+USER agent
+
+# Default command
+CMD ["/bin/bash"]

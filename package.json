@@ -1,0 +1,23 @@
+{
+  "name": "fix-build",
+  "version": "1.0.0",
+  "description": "Automatically triggers a pipeline to fix failed builds",
+  "type": "module",
+  "scripts": {
+    "fix-build:trigger:buildkite": "tsx scripts/fix-build/trigger-buildkite.ts",
+    "fix-build:trigger:github": "tsx scripts/fix-build/trigger-github.ts",
+    "complete-task:trigger:linear": "tsx scripts/complete-task/trigger-linear.ts"
+  },
+  "dependencies": {
+    "@buildkite/buildkite-sdk": "^0.3.3",
+    "octokit": "^4.0.0",
+    "tsx": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
