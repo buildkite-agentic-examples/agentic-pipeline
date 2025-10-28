@@ -7,7 +7,7 @@ steps:
   - label: ":webhook: Process Event"
     command: ./scripts/process-event.sh
     env:
-      FIX_BUILD_BUILDKITE_TRIGGER_ID: "buildkite-pipeline-trigger-id"
+      FIX_BUILD_BUILDKITE_TRIGGER_ID: "019a290b-8a26-794c-9b1d-0839679cde23"
       FIX_BUILD_GITHUB_TRIGGER_ID: "github-pipeline-trigger-id"
       COMPLETE_TASK_TRIGGER_ID: "linear-pipeline-trigger-id"
       ANALYZE_REQUEST_TRIGGER_ID: "linear-pipeline-trigger-id"
