@@ -8,7 +8,7 @@ steps:
     command: ./scripts/process-event.sh
     env:
       FIX_BUILD_BUILDKITE_TRIGGER_ID: "019a290b-8a26-794c-9b1d-0839679cde23"
-      FIX_BUILD_GITHUB_TRIGGER_ID: "github-pipeline-trigger-id"
+      FIX_BUILD_GITHUB_TRIGGER_ID: "019a293c-52a6-7ccf-a993-08f9284d3b71"
       COMPLETE_TASK_TRIGGER_ID: "019a2934-4027-772d-9bd5-812175356694"
       ANALYZE_REQUEST_TRIGGER_ID: "linear-pipeline-trigger-id"
       FIX_BUG_TRIGGER_ID: "bugsnag-pipeline-trigger-id"
