@@ -39,7 +39,7 @@ function generateLinearPipeline(
     plugins: [
       {
         "docker-compose#v5.11.0": {
-          run: "first-draft",
+          run: "buildy",
           build: {
             context: ".",
             dockerfile: "Dockerfile.agent",
