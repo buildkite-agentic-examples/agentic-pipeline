@@ -22,6 +22,10 @@ case "${BUILDKITE_TRIGGER_ID}" in
     npm run fix-build:trigger:github
     ;;
 
+  "${PR_ASSIST_GITHUB_TRIGGER_ID}")
+    npm run pr-assist:trigger:github
+    ;;
+
   "${COMPLETE_TASK_TRIGGER_ID}")
     npm run complete-task:trigger:linear
     ;;

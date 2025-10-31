@@ -6,6 +6,7 @@
   "scripts": {
     "fix-build:trigger:buildkite": "tsx scripts/fix-build/trigger-buildkite.ts",
     "fix-build:trigger:github": "tsx scripts/fix-build/trigger-github.ts",
+    "pr-assist:trigger:github": "tsx scripts/pr-assist/trigger-github.ts",
     "complete-task:trigger:linear": "tsx scripts/complete-task/trigger-linear.ts"
   },
   "dependencies": {
