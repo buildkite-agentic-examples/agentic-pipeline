@@ -51,7 +51,7 @@ Configure webhooks in external services to POST to your Buildkite pipeline webho
 
 **Buildkite**:
 - **Events**: Build state changed (filter for `failed` state)
-- **Filter**: PRs with `buildy-fix` label
+- **Filter**: PRs with `fix-build` label
 - **Payload fields**: Build URL, build state, build number, branch, commit
 - **Target trigger**: Use `FIX_BUILD_BUILDKITE_TRIGGER_ID`
 
@@ -74,5 +74,5 @@ Configure webhooks in external services to POST to your Buildkite pipeline webho
 
 The agent automatically processes events based on trigger IDs:
 - Linear issues with the `first-draft` label trigger task completion or analysis
-- Failed Buildkite PR builds with the `buildy-fix` label trigger automatic fix attempts
+- Failed Buildkite PR builds with the `fix-build` label trigger automatic fix attempts
 - Bugsnag error spikes trigger automatic error analysis and fix attempts

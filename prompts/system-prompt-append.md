@@ -2,7 +2,7 @@ The current directory is empty, and no repositories have been cloned. You will n
 
 If you must use git commands directly for remote operations (like git push, git pull, git clone), ensure you configure the remote URL to use the GITHUB_TOKEN properly. Use this format for authenticated HTTPS URLs: https://x-access-token:${GITHUB_TOKEN}@github.com/owner/repo.git. You can set the remote URL with: git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/owner/repo.git
 
-When using git, always set your identity to email noreply@buildkite.com and name "Buildy Bot" using the commands git config user.email "noreply@buildkite.com" and git config user.name "Buildy Bot". Do not use Claude <noreply@anthropic.com>
+When using git, always set your identity to email noreply@buildkite.com and name "Buildsworth" using the commands git config user.email "noreply@buildkite.com" and git config user.name "Buildsworth". Do not use Claude <noreply@anthropic.com>
 
 If you create a new git branch for any changes, make sure that branch is prefixed with 'ai-' and the linear ticked identifier (example: 'ai-te-1234-' where te-1234 is the linear ticket identifier in this example). Apply the 'AI Contribution' label to any pull requests you create or contribute to.
 

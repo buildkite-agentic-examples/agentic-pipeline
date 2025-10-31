@@ -21,7 +21,7 @@ steps:
     depends_on: ~
     plugins:
       - docker-compose#v5.11.0:
-          run: buildy
+          run: buildsworth
           build:
             context: .
             dockerfile: Dockerfile.agent
@@ -94,12 +94,12 @@ case "$WEBHOOK_ACTION" in
     echo "Issue Labels:"
     echo "$LINEAR_ISSUE_LABELS"
 
-    if echo "$LINEAR_ISSUE_LABELS" | grep -q "^buildy-analysis$"; then
-      echo "Issue has 'buildy-analysis' label, uploading pipeline"
+    if echo "$LINEAR_ISSUE_LABELS" | grep -q "^buildsworth-analysis$"; then
+      echo "Issue has 'buildsworth-analysis' label, uploading pipeline"
 
       generate_linear_pipeline | buildkite-agent pipeline upload
     else
-      echo "Issue does not have 'buildy-analysis' label, skipping pipeline upload"
+      echo "Issue does not have 'buildsworth-analysis' label, skipping pipeline upload"
     fi
     ;;
   *)

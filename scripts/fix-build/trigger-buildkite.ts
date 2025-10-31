@@ -62,15 +62,15 @@ async function findOpenPrForBranch(
 }
 
 /**
- * Checks if a PR has the "buildy-fix" label
+ * Checks if a PR has the "fix-build" label
  */
-async function checkPrhasBuildyLabel(
+async function checkPrhasLabel(
   octokit: Octokit,
   prNumber: number,
   repoOwner: string,
   repoName: string,
 ): Promise<boolean> {
-  console.error(`Checking if PR #${prNumber} has 'buildy-fix' label...`);
+  console.error(`Checking if PR #${prNumber} has 'fix-build' label...`);
 
   const { data: pr } = await octokit.rest.pulls.get({
     owner: repoOwner,
@@ -78,12 +78,12 @@ async function checkPrhasBuildyLabel(
     pull_number: prNumber,
   });
 
-  const hasLabel = pr.labels.some((label) => label.name === "buildy-fix");
+  const hasLabel = pr.labels.some((label) => label.name === "fix-build");
 
   if (hasLabel) {
-    console.error(`PR #${prNumber} has 'buildy-fix' label`);
+    console.error(`PR #${prNumber} has 'fix-build' label`);
   } else {
-    console.error(`PR #${prNumber} does not have 'buildy-fix' label`);
+    console.error(`PR #${prNumber} does not have 'fix-build' label`);
   }
 
   return hasLabel;
@@ -140,7 +140,7 @@ function generateFixBuildPipeline(
     plugins: [
       {
         "docker-compose#v5.11.0": {
-          run: "buildy",
+          run: "buildsworth",
           build: {
             context: ".",
             dockerfile: "Dockerfile.agent",
@@ -309,21 +309,19 @@ async function main() {
 
   console.log("Build commit matches PR head commit");
 
-  const hasBuildyLabel = await checkPrhasBuildyLabel(
+  const hasLabel = await checkPrhasLabel(
     octokit,
     prNumber,
     repoOwner,
     repoName,
   );
 
-  if (!hasBuildyLabel) {
-    console.log(
-      "PR does not have 'buildy-fix' label, skipping pipeline upload",
-    );
+  if (!hasLabel) {
+    console.log("PR does not have 'fix-build' label, skipping pipeline upload");
     process.exit(0);
   }
 
-  console.log("PR has 'buildy-fix' label, uploading fix-build pipeline");
+  console.log("PR has 'fix-build' label, uploading fix-build pipeline");
 
   const webhookPullRequestUrl = `https://github.com/${repoOwner}/${repoName}/pull/${prNumber}`;
 

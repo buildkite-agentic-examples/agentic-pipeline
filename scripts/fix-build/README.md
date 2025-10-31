@@ -1,6 +1,6 @@
 # Fix Build
 
-Automatically triggers a pipeline to fix failed builds when a PR has the `buildy-fix` label.
+Automatically triggers a pipeline to fix failed builds when a PR has the `fix-build` label.
 
 ## How It Works
 
@@ -15,15 +15,15 @@ When a Buildkite build finishes:
    - Extracts repository information from the webhook payload
    - Uses the GitHub API (via Octokit) to find the associated open PR for the branch
    - Verifies the build commit matches the PR head commit (prevents stale builds)
-   - Checks if the PR has the `buildy-fix` label
+   - Checks if the PR has the `fix-build` label
    - If all conditions are met, dynamically generates and uploads a fix-build pipeline using the Buildkite SDK
 
 ### 2. GitHub Webhook (PR Labeled)
-When a PR is labeled with `buildy-fix`:
+When a PR is labeled with `fix-build`:
 1. `.buildkite/pipeline.yml` receives the webhook and runs `process-event.sh`
 2. `process-event.sh` routes to `trigger-github.ts` based on the trigger ID
 3. `trigger-github.ts` performs the following:
-   - Verifies the label is `buildy-fix`
+   - Verifies the label is `fix-build`
    - Uses the GitHub API (via Octokit) to get the PR head commit
    - Uses the Buildkite API to search for failed builds on the PR branch at the head commit
    - If a failed build is found, dynamically generates and uploads a fix-build pipeline using the Buildkite SDK

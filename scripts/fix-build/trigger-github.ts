@@ -154,7 +154,7 @@ function generateFixBuildPipeline(
     plugins: [
       {
         "docker-compose#v5.11.0": {
-          run: "buildy",
+          run: "buildsworth",
           build: {
             context: ".",
             dockerfile: "Dockerfile.agent",
@@ -206,7 +206,7 @@ function buildkiteAgent(...args: string[]): string {
  * Main processing logic
  */
 async function main() {
-  console.log("--- :github: Processing buildy-fix label webhook");
+  console.log("--- :github: Processing fix-build label webhook");
 
   const webhookPayload = buildkiteAgent(
     "meta-data",
@@ -251,12 +251,12 @@ async function main() {
   console.log(`PR branch: ${prBranch}`);
   console.log(`Repository: ${repoOwner}/${repoName}`);
 
-  if (labelName !== "buildy-fix") {
-    console.log("Label is not 'buildy-fix', exiting");
+  if (labelName !== "fix-build") {
+    console.log("Label is not 'fix-build', exiting");
     process.exit(0);
   }
 
-  console.log("Label is 'buildy-fix', checking for failed builds...");
+  console.log("Label is 'fix-build', checking for failed builds...");
 
   const pipelineSlug = repoName;
   const orgSlug = repoOwner;

@@ -1,7 +1,7 @@
 # Environment variables are configured dynamically in the Buildkite pipeline
 
 services:
-  buildy:
+  buildsworth:
     build:
       context: .
       dockerfile: Dockerfile.agent
