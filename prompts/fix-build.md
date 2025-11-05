@@ -34,10 +34,6 @@ You have access to the following tools:
 
 ## Process
 
-1. **Acknowledge the Request**
-   - You MUST post a very concise comment on the original PR acknowledging the request
-   - Your acknowledgement MUST include a link to the build you are running in - {{.AgentBuildURL}}
-
 1. **Gather Context**
    - You MUST extract the build number, state, and failed jobs
    - You MUST read the original pull request

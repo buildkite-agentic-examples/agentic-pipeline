@@ -149,7 +149,66 @@ async function main() {
       const BUILDSWORTH_USER_ID = "73f5316c-236c-4f50-9684-98890e0ea4fd";
 
       if (linearIssueAssigneeId === BUILDSWORTH_USER_ID) {
-        console.log("Issue is assigned to 'buildsworth', uploading pipeline");
+        console.log(
+          "Issue is assigned to 'buildsworth', posting acknowledgement and uploading pipeline",
+        );
+
+        // Post acknowledgement comment on the Linear issue
+        const agentBuildUrl = process.env.BUILDKITE_BUILD_URL || "";
+        const acknowledgementBody = `I'm on it! 🚀\n\nYou can follow my progress here: ${agentBuildUrl}`;
+
+        const linearApiToken = process.env.LINEAR_API_TOKEN;
+        if (linearApiToken) {
+          try {
+            const response = await fetch("https://api.linear.app/graphql", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: linearApiToken,
+              },
+              body: JSON.stringify({
+                query: `
+                  mutation CommentCreate($issueId: String!, $body: String!) {
+                    commentCreate(input: { issueId: $issueId, body: $body }) {
+                      success
+                      comment {
+                        id
+                      }
+                    }
+                  }
+                `,
+                variables: {
+                  issueId: linearIssueId,
+                  body: acknowledgementBody,
+                },
+              }),
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              if (result.data?.commentCreate?.success) {
+                console.log("Posted acknowledgement comment on Linear issue");
+              } else {
+                console.error(
+                  "Failed to post acknowledgement comment:",
+                  result.errors,
+                );
+              }
+            } else {
+              console.error(
+                "Failed to post acknowledgement comment:",
+                response.statusText,
+              );
+            }
+          } catch (error) {
+            console.error("Failed to post acknowledgement comment:", error);
+            // Continue with pipeline upload even if comment fails
+          }
+        } else {
+          console.warn(
+            "LINEAR_API_TOKEN not set, skipping acknowledgement comment",
+          );
+        }
 
         // Set environment variables for the pipeline
         process.env.LINEAR_ISSUE_ID = linearIssueId;

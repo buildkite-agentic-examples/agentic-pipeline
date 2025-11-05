@@ -291,10 +291,27 @@ async function main() {
   }
 
   console.log(
-    "Found failed build for PR head commit, uploading fix-build pipeline",
+    "Found failed build for PR head commit, posting acknowledgement and uploading fix-build pipeline",
   );
 
   const webhookPullRequestUrl = `https://github.com/${repoOwner}/${repoName}/pull/${prNumber}`;
+
+  // Post acknowledgement comment on the PR
+  const agentBuildUrl = process.env.BUILDKITE_BUILD_URL || "";
+  const acknowledgementBody = `I'm on it! 🛠️\n\nYou can follow my progress here: ${agentBuildUrl}`;
+
+  try {
+    await octokit.rest.issues.createComment({
+      owner: repoOwner,
+      repo: repoName,
+      issue_number: prNumber,
+      body: acknowledgementBody,
+    });
+    console.log("Posted acknowledgement comment on PR");
+  } catch (error) {
+    console.error("Failed to post acknowledgement comment:", error);
+    // Continue with pipeline upload even if comment fails
+  }
 
   // Set environment variables for the pipeline
   process.env.WEBHOOK_BUILD_STATE = failedBuild.state;
