@@ -12,9 +12,9 @@ interface LinearWebhookPayload {
     state?: {
       name: string;
     };
-    labels?: Array<{
-      name: string;
-    }>;
+    assignee?: {
+      id: string;
+    };
   };
 }
 
@@ -142,14 +142,14 @@ async function main() {
         process.exit(1);
       }
 
-      const linearIssueLabels =
-        payload.data.labels?.map((label) => label.name) || [];
+      const linearIssueAssigneeId = payload.data.assignee?.id || "";
 
-      console.log("Issue Labels:");
-      console.log(linearIssueLabels.join("\n"));
+      console.log(`Issue Assignee ID: ${linearIssueAssigneeId}`);
 
-      if (linearIssueLabels.includes("first-draft")) {
-        console.log("Issue has 'first-draft' label, uploading pipeline");
+      const BUILDSWORTH_USER_ID = "73f5316c-236c-4f50-9684-98890e0ea4fd";
+
+      if (linearIssueAssigneeId === BUILDSWORTH_USER_ID) {
+        console.log("Issue is assigned to 'buildsworth', uploading pipeline");
 
         // Set environment variables for the pipeline
         process.env.LINEAR_ISSUE_ID = linearIssueId;
@@ -170,7 +170,7 @@ async function main() {
         console.log(uploadProcess);
       } else {
         console.log(
-          "Issue does not have 'first-draft' label, skipping pipeline upload",
+          "Issue is not assigned to 'buildsworth', skipping pipeline upload",
         );
       }
       break;
