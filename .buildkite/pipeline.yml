@@ -14,3 +14,4 @@ steps:
       COMPLETE_TASK_TRIGGER_ID: "019a2934-4027-772d-9bd5-812175356694"
       ANALYZE_REQUEST_TRIGGER_ID: "linear-pipeline-trigger-id"
       FIX_BUG_TRIGGER_ID: "bugsnag-pipeline-trigger-id"
+      TEST_BURNER_TRIGGER_ID: "019a5cc2-787d-705a-935f-a85de5565e9a"

@@ -7,7 +7,8 @@
     "fix-build:trigger:buildkite": "tsx scripts/fix-build/trigger-buildkite.ts",
     "fix-build:trigger:github": "tsx scripts/fix-build/trigger-github.ts",
     "pr-assist:trigger:github": "tsx scripts/pr-assist/trigger-github.ts",
-    "complete-task:trigger:linear": "tsx scripts/complete-task/trigger-linear.ts"
+    "complete-task:trigger:linear": "tsx scripts/complete-task/trigger-linear.ts",
+    "test-burner:trigger:test-engine": "tsx scripts/test-burner/trigger-test-engine.ts"
   },
   "dependencies": {
     "@buildkite/buildkite-sdk": "^0.3.3",

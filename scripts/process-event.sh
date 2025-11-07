@@ -38,6 +38,10 @@ case "${BUILDKITE_TRIGGER_ID}" in
     ./scripts/fix-bug/trigger-bugsnag.sh
     ;;
 
+  "${TEST_BURNER_TRIGGER_ID}")
+    npm run test-burner:trigger:test-engine
+    ;;
+
   *)
     echo "No event processor configured for this trigger"
     exit 0
