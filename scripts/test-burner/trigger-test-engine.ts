@@ -126,7 +126,6 @@ function generateTestBurnerPipeline(
   pipeline.addStep({
     command: `./agent.sh prompts/test-burner.md ${tokenArgs.join(" ")}`,
     label: ":mag: Analyzing test burn results",
-    depends_on: null,
     plugins: [
       {
         "docker-compose#v5.11.0": {
