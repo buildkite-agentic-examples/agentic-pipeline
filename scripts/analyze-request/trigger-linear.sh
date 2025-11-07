@@ -18,7 +18,7 @@ secrets:
 steps:
   - command: "./agent.sh prompts/analyze-request.md ${TOKEN_ARGS[*]}"
     label: ":linear: Handle Issue Update"
-    depends_on: ~
+    depends_on: "process-event"
     plugins:
       - docker-compose#v5.11.0:
           run: buildsworth

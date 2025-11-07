@@ -35,7 +35,7 @@ function generateLinearPipeline(
   pipeline.addStep({
     command: `./agent.sh prompts/complete-task.md ${tokenArgs.join(" ")}`,
     label: ":linear: Handle Issue Update",
-    depends_on: null,
+    depends_on: "process-event",
     plugins: [
       {
         "docker-compose#v5.11.0": {

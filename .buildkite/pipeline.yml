@@ -4,7 +4,8 @@ secrets:
   BUILDKITE_API_TOKEN: API_TOKEN_BUILDKITE
 
 steps:
-  - label: ":webhook: Process Event"
+  - key: "process-event"
+    label: ":webhook: Process Event"
     command: ./scripts/process-event.sh
     env:
       FIX_BUILD_BUILDKITE_TRIGGER_ID: "fix-build-buildkite-trigger-id"
