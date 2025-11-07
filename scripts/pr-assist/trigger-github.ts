@@ -163,7 +163,7 @@ function generatePrAssistPipeline(
   pipeline.addStep({
     command: `./agent.sh ${promptFile} ${tokenArgs.join(" ")}`,
     label: label,
-    depends_on: null,
+    depends_on: "process-event",
     plugins: [
       {
         "docker-compose#v5.11.0": {

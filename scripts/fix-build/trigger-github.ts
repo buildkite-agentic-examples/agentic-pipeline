@@ -150,7 +150,7 @@ function generateFixBuildPipeline(
   pipeline.addStep({
     command: `./agent.sh prompts/fix-build.md ${tokenArgs.join(" ")}`,
     label: ":buildkite: Fixing the build",
-    depends_on: null,
+    depends_on: "process-event",
     plugins: [
       {
         "docker-compose#v5.11.0": {

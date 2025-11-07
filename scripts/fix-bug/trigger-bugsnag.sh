@@ -27,7 +27,7 @@ secrets:
 steps:
   - command: "./agent.sh prompts/fix-bugsnag-error.md ${TOKEN_ARGS[*]}"
     label: ":bug: Fixing Bugsnag Error"
-    depends_on: ~
+    depends_on: "process-event"
     plugins:
       - docker-compose#v5.11.0:
           run: buildsworth
