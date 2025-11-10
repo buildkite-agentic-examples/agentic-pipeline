@@ -100,6 +100,7 @@ function generateTestBurnerPipeline(
 
   // Step 1: Trigger the test-burner pipeline synchronously
   pipeline.addStep({
+    key: "burn-test",
     trigger: pipelineTrigger,
     label: `:fire: Burning test 1000 times (${pipelineTrigger})`,
     build: {
@@ -124,6 +125,7 @@ function generateTestBurnerPipeline(
   ];
 
   pipeline.addStep({
+    depends_on: "burn-test",
     command: `./agent.sh prompts/test-burner.md ${tokenArgs.join(" ")}`,
     label: ":mag: Analyzing test burn results",
     plugins: [
