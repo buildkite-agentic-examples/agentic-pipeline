@@ -25,12 +25,16 @@ You have access to the following tools:
  - `gh` GitHub CLI
    - `gh pr comment <number>` - Comment on a pull request
    - `gh pr view <number>` - View pull request details
-- Buildkite MCP (mcp__buildkite__* tools) - Use these to analyze the test-burner pipeline results:
+- **Buildkite Pipeline MCP Tools** - Use these to find and analyze the test-burner pipeline:
    - `mcp__buildkite__list_builds` - Find the test-burner build
    - `mcp__buildkite__get_build` - Get build status and details
    - `mcp__buildkite__get_jobs` - View job details for the test burn
    - `mcp__buildkite__tail_logs` - View logs from the test runs
-   - Use these tools to analyze test run results and identify failure patterns
+- **Buildkite Test Engine MCP Tools** - Use these to analyze test execution data:
+   - `mcp__test_engine__get_run` - Get test run data for a specific build
+   - `mcp__test_engine__get_failed_test_executions` - Get detailed test failure information including stack traces
+   - `mcp__test_engine__get_test` - Get metadata for specific tests
+   - Use these tools to get structured test failure data instead of parsing logs manually
 
 ## Process
 
@@ -43,9 +47,7 @@ You have access to the following tools:
 2. **Analyze Failure Patterns**
    - You MUST determine if the test failed at all during the 1000 runs
    - If it failed, you MUST calculate the failure rate (e.g., "failed 5 out of 1000 runs = 0.5% failure rate")
-   - You MUST analyze the failure logs to identify:
-     - Common error messages or stack traces
-     - Whether failures are consistent or intermittent
+   - You MUST analyze test failures to identify:
      - Potential root causes (timing issues, race conditions, environment dependencies, etc.)
      - Whether failures show a pattern (e.g., only fail on specific iterations)
    - You SHOULD categorize the flakiness severity:
